@@ -1,5 +1,10 @@
 # Amanda OS CLI Tools
 
+[![CI](https://github.com/corinoah1013/amanda-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/corinoah1013/amanda-cli/actions/workflows/ci.yml)
+[![Release](https://github.com/corinoah1013/amanda-cli/actions/workflows/release.yml/badge.svg)](https://github.com/corinoah1013/amanda-cli/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Rust Version](https://img.shields.io/badge/rust-1.85+-orange.svg)](https://www.rust-lang.org)
+
 Herramientas CLI públicas del ecosistema Amanda OS — componentes reales del sistema que demuestran capacidad técnica en Rust para operaciones de sistemas, networking y protocolos.
 
 > "El proyecto principal no puede mostrarse, pero estas herramientas salen directamente de él."
@@ -20,7 +25,14 @@ Herramientas CLI públicas del ecosistema Amanda OS — componentes reales del s
 curl -fsSL https://raw.githubusercontent.com/corinoah1013/amanda-cli/main/install.sh | bash
 ```
 
-### Opción 2: Descargar binario pre-compilado
+### Opción 2: Homebrew (macOS/Linux)
+
+```bash
+brew tap corinoah1013/amanda-cli
+brew install amanda-watch
+```
+
+### Opción 3: Descargar binario pre-compilado
 
 ```bash
 # Linux x64
@@ -39,14 +51,14 @@ tar xzf amanda-watch-macos-arm64.tar.gz
 sudo mv amanda-watch /usr/local/bin/
 ```
 
-### Opción 3: Debian/Ubuntu (.deb)
+### Opción 4: Debian/Ubuntu (.deb)
 
 ```bash
 wget https://github.com/corinoah1013/amanda-cli/releases/latest/download/amanda-watch_0.1.0_amd64.deb
 sudo dpkg -i amanda-watch_0.1.0_amd64.deb
 ```
 
-### Opción 4: Compilar desde fuente
+### Opción 5: Compilar desde fuente
 
 ```bash
 git clone https://github.com/corinoah1013/amanda-cli.git
@@ -55,7 +67,7 @@ cargo build --release
 sudo cp target/release/amanda-watch /usr/local/bin/
 ```
 
-### Opción 5: Via cargo
+### Opción 6: Via cargo
 
 ```bash
 cargo install amanda-watch
@@ -133,6 +145,22 @@ cargo clippy --all-targets --all-features
 - **Releases automáticos** al crear un tag `v*`
 - **Publicación a crates.io** (opcional)
 
+## Contribuir
+
+¡Las contribuciones son bienvenidas! Por favor lee nuestra [Guía de Contribución](CONTRIBUTING.md) y el [Código de Conducta](CODE_OF_CONDUCT.md).
+
+### Reportar bugs o solicitar features
+
+- [Bug Report](https://github.com/corinoah1013/amanda-cli/issues/new?template=bug_report.md)
+- [Feature Request](https://github.com/corinoah1013/amanda-cli/issues/new?template=feature_request.md)
+
+## Roadmap
+
+- [x] amanda-watch v0.1.0
+- [ ] amanda-watch v0.2.0 (UI improvements)
+- [ ] amanda-logs v0.1.0
+- [ ] amanda-mail v0.1.0
+
 ## Narrativa
 
 Estas herramientas son los componentes CLI públicos de Amanda OS, un sistema operativo completo cuya arquitectura core (kernel Rust 64/128-bit) es privada. Cada herramienta:
@@ -144,4 +172,13 @@ Estas herramientas son los componentes CLI públicos de Amanda OS, un sistema op
 
 ## Licencia
 
-MIT — Ver archivos LICENSE individuales.
+MIT — Ver [LICENSE](LICENSE).
+
+## Contacto
+
+- GitHub Issues: [github.com/corinoah1013/amanda-cli/issues](https://github.com/corinoah1013/amanda-cli/issues)
+- Email: corinoah1013@github.com
+
+---
+
+<p align="center">Parte del ecosistema <strong>Amanda OS</strong></p>

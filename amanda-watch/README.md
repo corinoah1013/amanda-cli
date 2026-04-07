@@ -1,5 +1,9 @@
 # amanda-watch
 
+[![Crates.io](https://img.shields.io/crates/v/amanda-watch)](https://crates.io/crates/amanda-watch)
+[![Documentation](https://docs.rs/amanda-watch/badge.svg)](https://docs.rs/amanda-watch)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Monitor de procesos y recursos del sistema para Amanda OS. Equivalente a `htop` pero diseñado para scripting, automatización y pipelines — salida estructurada, filtros programáticos, alertas configurables.
 
 ## Características
@@ -15,11 +19,33 @@ Monitor de procesos y recursos del sistema para Amanda OS. Equivalente a `htop` 
 
 ## Instalación
 
+### Script automático
+
 ```bash
-cargo build --release
+curl -fsSL https://raw.githubusercontent.com/corinoah1013/amanda-cli/main/install.sh | bash
 ```
 
-El binario estará en `target/release/amanda-watch`.
+### Homebrew
+
+```bash
+brew tap corinoah1013/amanda-cli
+brew install amanda-watch
+```
+
+### Cargo
+
+```bash
+cargo install amanda-watch
+```
+
+### Desde código fuente
+
+```bash
+git clone https://github.com/corinoah1013/amanda-cli.git
+cd amanda-cli
+cargo build --release
+sudo cp target/release/amanda-watch /usr/local/bin/
+```
 
 ## Uso
 
@@ -53,9 +79,6 @@ amanda-watch --filter-cpu-above 50
 
 # Procesos usando más de 100MB RAM
 amanda-watch --filter-mem-above 100
-
-# Combinar filtros
-amanda-watch --filter-name "python" --filter-cpu-above 10
 ```
 
 ### Monitoreo continuo
@@ -79,9 +102,6 @@ amanda-watch --alert-mem 90
 
 # Vigilar proceso específico
 amanda-watch --watch-process nginx
-
-# Configuración desde archivo
-amanda-watch --alert-config alerts.json
 ```
 
 ### Auditoría y Reportes
@@ -92,9 +112,6 @@ amanda-watch --snapshot system.amaudit
 
 # Generar reporte .amrpt
 amanda-watch --report report.amrpt --system
-
-# Pipeline: procesos de alto consumo -> archivo
-amanda-watch --format json --filter-cpu-above 50 | jq -r '.processes[].name' > high-cpu.txt
 ```
 
 ## Formatos Amanda OS
@@ -104,20 +121,6 @@ amanda-watch --format json --filter-cpu-above 50 | jq -r '.processes[].name' > h
 | `.amaudit` | Snapshot de estado del sistema con hash chain (auditable) |
 | `.amrpt` | Reporte estructurado con métricas y tabla de procesos |
 
-## Ejemplos de scripting
-
-```bash
-#!/bin/bash
-# Monitorear uso de memoria de un servicio
-
-SERVICE="postgres"
-THRESHOLD_MB=500
-
-amanda-watch --filter-name "$SERVICE" --format json | jq -e --arg MB "$THRESHOLD_MB" '
-  .processes | map(select(.memory_bytes > ($MB | tonumber) * 1024 * 1024)) | length > 0
-' && echo "⚠️ $SERVICE usando más de ${THRESHOLD_MB}MB"
-```
-
 ## Licencia
 
-MIT - Ver LICENSE para detalles.
+MIT — Ver [LICENSE](../LICENSE).
