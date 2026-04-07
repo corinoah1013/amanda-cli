@@ -13,6 +13,7 @@ mod filter;
 mod monitor;
 mod output;
 mod snapshot;
+mod tui;
 
 use alert::{AlertConfig, AlertEngine};
 use filter::ProcessFilter;
@@ -85,6 +86,10 @@ struct Cli {
     /// Export to .amrpt report file
     #[arg(long, value_name = "FILE")]
     report: Option<PathBuf>,
+
+    /// Launch interactive TUI mode
+    #[arg(long)]
+    tui: bool,
 }
 
 #[derive(Clone, ValueEnum)]
@@ -129,7 +134,13 @@ async fn main() -> Result<()> {
     
     // Create system monitor
     let mut monitor = SystemMonitor::new();
-    
+
+    // TUI mode
+    if cli.tui {
+        let refresh = cli.interval.max(1);
+        return tui::run_tui(monitor, filter, cli.sort.into(), cli.top, refresh).await;
+    }
+
     // Single shot mode
     if cli.interval == 0 {
         if cli.watch_process.is_some() {
