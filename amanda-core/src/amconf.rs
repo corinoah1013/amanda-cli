@@ -16,13 +16,15 @@ pub struct Profile {
     pub settings: HashMap<String, serde_json::Value>,
 }
 
-/// Encrypted credential entry (stub for now)
+/// Credential entry.
+///
+/// WARNING: values are stored in plaintext. Encryption is not yet implemented.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Credential {
     pub name: String,
     pub credential_type: String,
-    /// Encrypted value (base64)
-    pub encrypted_value: String,
+    /// Credential value (plaintext — encryption not yet implemented)
+    pub value: String,
 }
 
 /// Main configuration structure
@@ -37,7 +39,7 @@ pub struct Config {
     /// Available profiles
     pub profiles: HashMap<String, Profile>,
     
-    /// Stored credentials (encrypted)
+    /// Stored credentials (plaintext — encryption not yet implemented)
     pub credentials: Vec<Credential>,
     
     /// Global settings

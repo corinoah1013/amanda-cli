@@ -1,5 +1,6 @@
 //! Alert system for threshold monitoring
 
+use amanda_core::format_bytes;
 use crate::monitor::{ProcessInfo, SystemSnapshot};
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
@@ -171,19 +172,3 @@ impl AlertEngine {
     }
 }
 
-fn format_bytes(bytes: u64) -> String {
-    const UNITS: &[&str] = &["B", "KB", "MB", "GB", "TB"];
-    
-    if bytes == 0 {
-        return "0 B".to_string();
-    }
-    
-    let exp = (bytes as f64).log(1024.0).min(UNITS.len() as f64 - 1.0) as usize;
-    let value = bytes as f64 / 1024f64.powi(exp as i32);
-    
-    if exp == 0 {
-        format!("{} {}", bytes, UNITS[0])
-    } else {
-        format!("{:.1} {}", value, UNITS[exp])
-    }
-}

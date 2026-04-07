@@ -28,17 +28,35 @@ impl AmandaMetadata {
             version: env!("CARGO_PKG_VERSION").to_string(),
             created_at: Utc::now(),
             generator: generator.into(),
-            hostname: gethostname::gethostname().ok(),
+            hostname: Some(gethostname::gethostname()),
         }
     }
 }
 
-/// Get system hostname (stub for now)
+/// Get system hostname
 pub mod gethostname {
-    pub fn gethostname() -> Result<String, std::io::Error> {
+    pub fn gethostname() -> String {
         std::env::var("HOSTNAME")
             .or_else(|_| std::fs::read_to_string("/etc/hostname").map(|s| s.trim().to_string()))
-            .or_else(|_| Ok("unknown".to_string()))
+            .unwrap_or_else(|_| "unknown".to_string())
+    }
+}
+
+/// Format bytes to human-readable string
+pub fn format_bytes(bytes: u64) -> String {
+    const UNITS: &[&str] = &["B", "KB", "MB", "GB", "TB"];
+
+    if bytes == 0 {
+        return "0 B".to_string();
+    }
+
+    let exp = (bytes as f64).log(1024.0).min(UNITS.len() as f64 - 1.0) as usize;
+    let value = bytes as f64 / 1024f64.powi(exp as i32);
+
+    if exp == 0 {
+        format!("{} {}", bytes, UNITS[0])
+    } else {
+        format!("{:.1} {}", value, UNITS[exp])
     }
 }
 

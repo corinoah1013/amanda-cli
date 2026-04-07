@@ -107,12 +107,11 @@ impl SystemMonitor {
     }
     
     /// Take a snapshot of system resources
-    pub fn snapshot(&mut self) -> SystemSnapshot {
-        // Refresh all data
+    pub async fn snapshot(&mut self) -> SystemSnapshot {
         self.system.refresh_all();
-        
-        // Small delay for CPU measurement
-        std::thread::sleep(std::time::Duration::from_millis(100));
+
+        // Small delay for accurate CPU measurement — async-safe
+        tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
         self.system.refresh_cpu_all();
         
         let cpus = self.system.cpus();
@@ -146,21 +145,20 @@ impl SystemMonitor {
         
         SystemSnapshot {
             timestamp: chrono::Utc::now(),
-            hostname: gethostname::gethostname().unwrap_or_else(|_| "unknown".to_string()),
+            hostname: gethostname::gethostname(),
             cpu: cpu_info,
             memory: memory_info,
             load_average,
         }
     }
     
-    /// Get filtered and sorted processes
+    /// Get filtered and sorted processes.
+    /// Must be called after `snapshot()` which refreshes system state.
     pub fn processes(
         &mut self,
         filter: &super::filter::ProcessFilter,
         sort_by: SortBy,
     ) -> Vec<ProcessInfo> {
-        self.system.refresh_all();
-        
         let mut processes: Vec<ProcessInfo> = self
             .system
             .processes()

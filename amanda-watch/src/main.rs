@@ -132,9 +132,13 @@ async fn main() -> Result<()> {
     
     // Single shot mode
     if cli.interval == 0 {
+        if cli.watch_process.is_some() {
+            warn!("--watch-process requires --interval to detect process termination; running single snapshot only");
+        }
+
         info!("Running single system snapshot");
-        
-        let snapshot = monitor.snapshot();
+
+        let snapshot = monitor.snapshot().await;
         let processes = monitor.processes(&filter, cli.sort.into());
         
         // Check alerts
@@ -176,9 +180,9 @@ async fn main() -> Result<()> {
     loop {
         interval.tick().await;
         
-        let snapshot = monitor.snapshot();
+        let snapshot = monitor.snapshot().await;
         let processes = monitor.processes(&filter, cli.sort.into());
-        
+
         // Check alerts
         let alerts = alert_engine.check(&snapshot, &processes);
         for alert in &alerts {

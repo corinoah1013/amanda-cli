@@ -168,8 +168,7 @@ impl Report {
         // Sections
         for section in &self.sections {
             output.push_str(&format!("## {}\n", section.title));
-            output.push_str(&format!("Type: {:?}\n\n", section.section_type));
-            
+
             match section.section_type {
                 SectionType::Text => {
                     if let Some(text) = section.data.as_str() {
@@ -184,13 +183,44 @@ impl Report {
                         }
                     }
                 }
-                _ => {
-                    // For table/list, just pretty-print JSON
+                SectionType::List => {
+                    if let Some(arr) = section.data.as_array() {
+                        for item in arr {
+                            let text = item.as_str()
+                                .map(|s| s.to_string())
+                                .unwrap_or_else(|| item.to_string());
+                            output.push_str(&format!("  - {}\n", text));
+                        }
+                    }
+                }
+                SectionType::Chart => {
+                    if let Some(obj) = section.data.as_object() {
+                        let max_val = obj.values()
+                            .filter_map(|v| v.as_f64())
+                            .fold(0.0_f64, f64::max);
+                        for (key, value) in obj {
+                            if let Some(v) = value.as_f64() {
+                                let bar_width = 30usize;
+                                let filled = if max_val > 0.0 {
+                                    ((v / max_val) * bar_width as f64) as usize
+                                } else {
+                                    0
+                                };
+                                let bar = "█".repeat(filled) + &"░".repeat(bar_width - filled);
+                                output.push_str(&format!("  {:20} │{}│ {:.1}\n", key, bar, v));
+                            }
+                        }
+                    } else {
+                        output.push_str(&serde_json::to_string_pretty(&section.data).unwrap_or_default());
+                        output.push('\n');
+                    }
+                }
+                SectionType::Table => {
                     output.push_str(&serde_json::to_string_pretty(&section.data).unwrap_or_default());
                     output.push('\n');
                 }
             }
-            
+
             output.push('\n');
         }
         
